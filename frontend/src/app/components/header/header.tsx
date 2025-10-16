@@ -7,8 +7,9 @@ import Link from "next/link";
 const Header = () => {
 
     return (
-        <header className="bg-white rounded-lg shadow-xl m-4">
-            <div className="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
+        <header className="bg-white shadow-xl fixed top-0 w-full z-10">
+            <div className="w-full mx-auto max-w-screen-xl p-4 flex items-center justify-between">
+
                 <div className="flex items-center gap-4">
                     <div className="w-[40px] h-[40px]">
                         <Image src={logo} alt="Logo" width={70} height={70} className="object-contain" />

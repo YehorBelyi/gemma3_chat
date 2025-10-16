@@ -1,12 +1,18 @@
+"use client";
 import Chat from "../components/chat/chat";
-import { ApiProvider } from "../contexts/ApiContext";
+import { UseModelAPI } from "../contexts/ApiContext";
+import PromptArea from "../components/prompt-area/promp_area";
 
 export default function Home() {
-
+    const { handleSend } = UseModelAPI();
 
     return (
-        <ApiProvider>
-            <Chat />
-        </ApiProvider >
+        <div className="flex flex-col flex-1">
+            <div className="flex-1 flex flex-col">
+                <Chat />
+            </div>
+
+            <PromptArea onSend={handleSend} />
+        </div>
     );
 }

@@ -1,48 +1,52 @@
 "use client";
-import PromptArea from "../prompt-area/promp_area";
 import { UseModelAPI } from "@/app/contexts/ApiContext";
-import { useState } from "react";
-import { Message, ModelResponse } from "@/app/types/api";
+import { useEffect, useRef } from "react";
+import CodeBlock from "@/app/utils/codeblock";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function Chat() {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const { processPrompt } = UseModelAPI();
+    const { messages } = UseModelAPI();
+    const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
 
-    const handleSend = async (prompt: string) => {
-        const userMessage: Message = { role: "user", content: prompt };
-        setMessages(prev => [...prev, userMessage]);
-
-        try {
-            const response = await processPrompt(prompt);
-            if (response?.model_response) {
-                const modelMessage: Message = {
-                    role: "system",
-                    content: response.model_response
-                };
-                setMessages(prev => [...prev, modelMessage]);
-            }
-        } catch (err) {
-            console.error(err);
+    useEffect(() => {
+        if (endOfMessagesRef.current) {
+            endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
         }
-    };
+    }, [messages]);
 
     return (
-        <div className="flex flex-col h-screen">
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-                {messages.map((msg, idx) => (
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 flex flex-col mt-[70px]">
+            {messages?.map((msg, idx) => (
+                <div
+                    key={idx}
+                    className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
                     <div
-                        key={idx}
-                        className={`p-3 rounded-2xl max-w-xs ${msg.role === "user"
-                            ? "bg-blue-500 text-white ml-auto"
-                            : "bg-gray-200 text-gray-900"
-                            }`}
+                        className={`p-3 rounded-2xl whitespace-pre-wrap break-words`}
+                        style={{
+                            maxWidth: "65%",
+                            wordBreak: "break-word",
+                            overflowWrap: "anywhere",
+                            backgroundColor: msg.role === "user" ? "#3B82F6" : "#E5E7EB",
+                            color: msg.role === "user" ? "white" : "#1F2937",
+                        }}
                     >
-                        {msg.content}
+                        <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                                code: CodeBlock,
+                                p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                                strong: ({ node, ...props }) => <strong className="font-extrabold" {...props} />,
+                            }}
+                        >
+                            {msg.content}
+                        </ReactMarkdown>
                     </div>
-                ))}
-            </div>
+                </div>
+            ))}
 
-            <PromptArea onSend={handleSend} />
+            <div ref={endOfMessagesRef} />
         </div>
     );
 }
