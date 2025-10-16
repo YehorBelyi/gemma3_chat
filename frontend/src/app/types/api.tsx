@@ -1,7 +1,7 @@
 export type ApiContextType = {
     processPrompt: (userPrompt: string) => Promise<ModelResponse | null>;
     messages: Array<Message>;
-    handleSend: (prompt: string) => any;
+    handleSend: (prompt: string) => Promise<void>;
     isLoading: boolean;
 };
 export type Message = {
