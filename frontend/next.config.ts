@@ -1,9 +1,18 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const repoName = 'gemma3_chat';
+
+const nextConfig = {
   output: 'export',
   distDir: 'out',
   devIndicators: false,
+
+  basePath: `/${repoName}`,
+
+  images: {
+    unoptimized: true,
+  },
+
   typescript: {
     ignoreBuildErrors: true,
   },
