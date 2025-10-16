@@ -7,12 +7,6 @@ const nextConfig = {
   distDir: 'out',
   devIndicators: false,
 
-  basePath: `/${repoName}`,
-
-  images: {
-    unoptimized: true,
-  },
-
   typescript: {
     ignoreBuildErrors: true,
   },
