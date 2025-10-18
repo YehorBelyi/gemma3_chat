@@ -5,7 +5,7 @@ export type ApiContextType = {
     isLoading: boolean;
 };
 export type Message = {
-    role: "user" | "system";
+    role: "user" | "system" | "error";
     content: string;
 };
 
