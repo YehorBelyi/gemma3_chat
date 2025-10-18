@@ -11,8 +11,10 @@ export default function PromptArea({ onSend }: PromptAreaProps) {
     const [prompt, setPrompt] = useState("");
     const { isLoading } = UseModelAPI();
 
-    const sendPrompt = async (e: FormEvent) => {
-        e.preventDefault();
+    const sendPrompt = async (e: FormEvent | string) => {
+        if (typeof e !== 'string') {
+            e.preventDefault();
+        }
 
         if (isLoading) return;
 
@@ -27,7 +29,7 @@ export default function PromptArea({ onSend }: PromptAreaProps) {
         <div className="sticky bottom-0 bg-gradient-to-r from-gray-50 to-white border-t border-gray-200 shadow-inner">
             <form
                 id="chat-form"
-                className="flex items-center gap-3 max-w-screen-lg mx-auto p-4"
+                className="flex items-center gap-3 max-w-[1160px] mx-auto p-4"
                 onSubmit={sendPrompt}
             >
                 <textarea
@@ -35,6 +37,12 @@ export default function PromptArea({ onSend }: PromptAreaProps) {
                     placeholder={isLoading ? "Waiting for response..." : "Type your message..."}
                     rows={1}
                     onChange={(e) => setPrompt(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            sendPrompt(e);
+                        }
+                    }}
                     value={prompt}
                     required
                     disabled={isLoading}

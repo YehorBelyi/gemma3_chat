@@ -7,8 +7,8 @@ export default function Home() {
     const { handleSend } = UseModelAPI();
 
     return (
-        <div className="flex flex-col flex-1">
-            <div className="flex-1 flex flex-col">
+        <div className="flex flex-col flex-1 bg-gray-50">
+            <div className="flex-1 flex flex-col mx-auto w-full max-w-6xl">
                 <Chat />
             </div>
 

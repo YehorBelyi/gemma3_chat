@@ -16,7 +16,7 @@ export default function Chat() {
     }, [messages]);
 
     return (
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 flex flex-col mt-[70px]">
+        <div className="overflow-y-auto p-4 space-y-4 flex flex-col pt-[90px] max-w-6xl min-w-3xs">
             {messages?.map((msg, idx) => (
                 <div
                     key={idx}
