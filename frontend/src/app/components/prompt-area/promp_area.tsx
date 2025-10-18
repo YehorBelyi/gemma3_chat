@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { UseModelAPI } from "@/app/contexts/ApiContext";
 import { FormEvent } from "react";
+import "./style.css";
 
 type PromptAreaProps = {
     onSend: (prompt: string) => Promise<void>;
@@ -10,6 +11,14 @@ type PromptAreaProps = {
 export default function PromptArea({ onSend }: PromptAreaProps) {
     const [prompt, setPrompt] = useState("");
     const { isLoading } = UseModelAPI();
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+    useEffect(() => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto";
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+        }
+    }, [prompt]);
 
     const sendPrompt = async (e: FormEvent | string) => {
         if (typeof e !== 'string') {
@@ -33,7 +42,8 @@ export default function PromptArea({ onSend }: PromptAreaProps) {
                 onSubmit={sendPrompt}
             >
                 <textarea
-                    className="flex-grow border border-gray-300 rounded-2xl px-4 py-2 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    ref={textareaRef}
+                    className="flex-grow border border-gray-300 rounded-2xl px-4 py-2 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none hide-scrollbar"
                     placeholder={isLoading ? "Waiting for response..." : "Type your message..."}
                     rows={1}
                     onChange={(e) => setPrompt(e.target.value)}
@@ -46,6 +56,7 @@ export default function PromptArea({ onSend }: PromptAreaProps) {
                     value={prompt}
                     required
                     disabled={isLoading}
+                    style={{ maxHeight: "130px", overflowY: "auto" }}
                 />
                 {!isLoading ?
                     <button
