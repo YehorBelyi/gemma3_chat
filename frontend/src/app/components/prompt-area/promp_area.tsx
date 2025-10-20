@@ -3,6 +3,9 @@ import { useState, useRef, useEffect } from "react";
 import { UseModelAPI } from "@/app/contexts/ApiContext";
 import { FormEvent } from "react";
 import "./style.css";
+import send_button from "../../../../public/send_button.svg";
+import refresh_button from "../../../../public/refresh.svg";
+import Image from "next/image";
 
 type PromptAreaProps = {
     onSend: (prompt: string) => Promise<void>;
@@ -34,6 +37,10 @@ export default function PromptArea({ onSend }: PromptAreaProps) {
         await onSend(trimmedPrompt);
     };
 
+    const handleReload = () => {
+        if (confirm("Are you sure, you want to reset your chat?")) window.location.reload();
+    };
+
     return (
         <div className="sticky bottom-0 bg-gradient-to-r from-gray-50 to-white border-t border-gray-200 shadow-inner">
             <form
@@ -58,13 +65,24 @@ export default function PromptArea({ onSend }: PromptAreaProps) {
                     disabled={isLoading}
                     style={{ maxHeight: "130px", overflowY: "auto" }}
                 />
+                <button
+                    type="button"
+                    onClick={handleReload}
+                    aria-label="Reload and clear chat"
+                    disabled={isLoading}
+                    className={`p-3 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-500 
+                                transition-colors duration-200 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                    <Image src={refresh_button} alt="Refresh button" width={40} height={40} />
+                </button>
+
                 {!isLoading ?
                     <button
                         type="submit"
                         className={`flex items-center justify-center gap-2 text-white px-5 py-2.5 rounded-2xl font-medium shadow-sm focus:ring-4 focus:ring-blue-300 transition-colors bg-blue-600 hover:bg-blue-700`}
                         disabled={isLoading}
                     >
-                        Send
+                        <Image src={send_button} alt="Send button" />
                     </button>
                     :
 

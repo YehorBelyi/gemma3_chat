@@ -4,6 +4,9 @@ import { useEffect, useRef } from "react";
 import CodeBlock from "@/app/utils/codeblock";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import copy_image from "../../../../public/content_copy.svg";
+import Image from "next/image";
+import "./style.css";
 
 export default function Chat() {
     const { messages } = UseModelAPI();
@@ -37,37 +40,66 @@ export default function Chat() {
         }
     };
 
+    const handleCopy = async (text: string) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            alert("Text was successfully copied!");
+        } catch (err) {
+            alert(`Couldn't copy the text: ${err}`);
+        }
+    };
+
     return (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col pt-[90px] w-full">
             {messages?.map((msg, idx) => {
                 const styles = getMessageStyles(msg.role);
+                const isModelMessage = msg.role === "system";
 
                 return (
                     <div
                         key={idx}
                         className={`flex ${styles.alignmentClass}`}
                     >
-                        <div
-                            className={`p-3 rounded-2xl whitespace-pre-wrap break-words`}
-                            style={{
-                                maxWidth: "65%",
-                                wordBreak: "break-word",
-                                overflowWrap: "anywhere",
-                                backgroundColor: styles.bgColor,
-                                color: styles.textColor,
-                            }}
-                        >
 
-                            <ReactMarkdown
-                                remarkPlugins={[remarkGfm]}
-                                components={{
-                                    code: CodeBlock,
-                                    p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
-                                    strong: ({ node, ...props }) => <strong className="font-extrabold" {...props} />,
+                        <div
+                            className={`flex flex-col max-w-[65%]`}
+                            style={{ maxWidth: "65%" }}
+                        >
+                            <div
+                                className={`p-3 rounded-2xl whitespace-pre-wrap break-words`}
+                                style={{
+                                    wordBreak: "break-word",
+                                    overflowWrap: "anywhere",
+                                    backgroundColor: styles.bgColor,
+                                    color: styles.textColor,
                                 }}
                             >
-                                {msg.content}
-                            </ReactMarkdown>
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
+                                    components={{
+                                        code: CodeBlock,
+                                        p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                                        strong: ({ node, ...props }) => <strong className="font-extrabold" {...props} />,
+                                    }}
+                                >
+                                    {msg.content}
+                                </ReactMarkdown>
+                            </div>
+
+                            {isModelMessage && (
+                                <button
+                                    className="flex self-end mt-1 anim-button"
+                                    onClick={() => handleCopy(msg.content)}
+                                    aria-label="Copy message to clipboard"
+                                >
+                                    <Image
+                                        src={copy_image}
+                                        alt="Copy"
+                                        width={23}
+                                        height={23}
+                                    />
+                                </button>
+                            )}
                         </div>
                     </div>
                 );
